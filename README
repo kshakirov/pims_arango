@@ -1,0 +1,2 @@
+1. activate venv - source venv/bin/activate
+2. pip install bottle
