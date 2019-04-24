@@ -36,7 +36,7 @@ class GraphManager:
                                 vertex_uniqueness='global')
 
 
-        return  ','.join(map(lambda  r: str(r['name']),response['vertices']))
+        return  ':'.join(map(lambda  r: str(r['name']),response['vertices']))
 
 
 
