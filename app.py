@@ -31,4 +31,12 @@ def index():
     g_manager.add_pair(body)
 
 
+@app.post('/batch/entity/parent/add')
+def index():
+    entities = request.json
+    print(entities)
+    g_manager = app.config.get('gm')
+    g_manager.add_pairs(entities)
+
+
 run(host='localhost', port=8081)

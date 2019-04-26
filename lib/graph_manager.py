@@ -49,6 +49,11 @@ class GraphManager:
         else:
             self.add_reference(entity_data['reference_id'], entity_data['id'])
 
+    def add_pairs(self,entites):
+        for entity in entites:
+            self.add_pair(entity)
+
+
     def get_all_parents(self, entity_id):
         response = self.pimsGraph.traverse(start_vertex='entity/%(id)s' % {'id': entity_id},
                                            direction='inbound', strategy='bfs',
