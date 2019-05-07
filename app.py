@@ -23,6 +23,15 @@ def index(id):
     return dumps(r)
 
 
+@app.get('/entity/<id>/id_path')
+def index(id):
+    g_manager = app.config.get('gm')
+    path = g_manager.get_all_parents_with_id(id)
+    r = [{"path": path}]
+    response.content_type = 'application/json'
+    return dumps(r)
+
+
 @app.post('/entity/parent/add')
 def index():
     body = request.json

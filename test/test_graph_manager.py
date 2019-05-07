@@ -14,8 +14,8 @@ class TestStringMethods(unittest.TestCase):
         self.g_manager.add_pair({'id': 4, 'name': 'child 3', 'reference_id': 0})
         self.g_manager.add_pair({'id': 2, 'name': 'child 3', 'reference_id': 0})
 
-    def test_parents(self):
-        name = self.g_manager.get_all_parents(1)
+    def test_parents_id(self):
+        name = self.g_manager.get_all_parents_with_id(1)
         print(name.join(","))
 
 

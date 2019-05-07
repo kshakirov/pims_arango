@@ -49,10 +49,9 @@ class GraphManager:
         else:
             self.add_reference(entity_data['reference_id'], entity_data['id'])
 
-    def add_pairs(self,entites):
+    def add_pairs(self, entites):
         for entity in entites:
             self.add_pair(entity)
-
 
     def get_all_parents(self, entity_id):
         response = self.pimsGraph.traverse(start_vertex='entity/%(id)s' % {'id': entity_id},
@@ -61,3 +60,11 @@ class GraphManager:
                                            vertex_uniqueness='global')
 
         return ':'.join(map(lambda r: str(r['name']), response['vertices']))
+
+    def get_all_parents_with_id(self, entity_id):
+        response = self.pimsGraph.traverse(start_vertex='entity/%(id)s' % {'id': entity_id},
+                                           direction='inbound', strategy='bfs',
+                                           edge_uniqueness='global',
+                                           vertex_uniqueness='global')
+
+        return ':'.join(map(lambda r: r['_key'] + '-' + str(r['name']), response['vertices']))
