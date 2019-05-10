@@ -38,16 +38,15 @@ class GraphManager:
             self.add_entity(entity_data)
         else:
             self.update_entity(entity_data['id'], entity_data['name'])
-
-        if not entities.has(str(entity_data['reference_id'])):
-            self.add_entity({'id': entity_data['reference_id'], 'name': (entity_data['parent_name'] or '')})
-        else:
-            self.update_entity(entity_data['reference_id'], entity_data['parent_name'])
-
-        if self.has_reference(entity_data['reference_id'], entity_data['id']):
-            print()
-        else:
-            self.add_reference(entity_data['reference_id'], entity_data['id'])
+        if 'reference_id' in entity_data and not entity_data['reference_id'] is None:
+            if not entities.has(str(entity_data['reference_id'])):
+                self.add_entity({'id': entity_data['reference_id'], 'name': (entity_data['parent_name'] or '')})
+            else:
+                self.update_entity(entity_data['reference_id'], entity_data['parent_name'])
+            if self.has_reference(entity_data['reference_id'], entity_data['id']):
+                print()
+            else:
+                self.add_reference(entity_data['reference_id'], entity_data['id'])
 
     def add_pairs(self, entites):
         for entity in entites:
