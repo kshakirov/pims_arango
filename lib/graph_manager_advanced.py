@@ -24,7 +24,8 @@ class GraphManagerAdvanced:
 
     def filter_references_to_save(self, entity_data):
         entity_key = entity_data['_key']
-        refs = {k: v for k, v in entity_data.items() if k == 'reference' and  not self.has_reference(entity_key,v['id'])}
+        refs = {k: v for k, v in entity_data.items() if
+                k == 'reference' and not self.has_reference(entity_key, v['id'])}
         refs = list(map(lambda r: r['id'], list(refs.values())))
         return refs
 
@@ -49,37 +50,22 @@ class GraphManagerAdvanced:
         for ref in references_to_save:
             self.add_reference(entity_key, ref)
 
-    def add_entity(self, entity_data):
+    def insert_entity(self, entity_data):
         entity_key = entity_data['_key']
         entities = self.pimsGraph.vertex_collection(self.VERTEX_COLLECTION)
         data_to_save = self.filter_data_to_save(entity_data)
         entities.insert(data_to_save)
         self.save_references(entity_key, entity_data)
 
-    def add_pair(self, entity_data):
+    def upsert_entity(self, entity_data):
         entities = self.pimsGraph.vertex_collection(self.VERTEX_COLLECTION)
         if not entities.has(str(entity_data['_key'])):
-            self.add_entity(entity_data)
+            self.insert_entity(entity_data)
         else:
             self.update_entity(entity_data['_key'], self.filter_data_to_save(entity_data))
         self.save_references(entity_data['_key'], entity_data)
 
-    def add_pairs(self, entites):
+    def upsert_batch(self, entites):
         for entity in entites:
-            self.add_pair(entity)
+            self.upsert_entity(entity)
 
-    def get_all_parents(self, entity_id):
-        response = self.pimsGraph.traverse(start_vertex='entity/%(id)s' % {'id': entity_id},
-                                           direction='inbound', strategy='bfs',
-                                           edge_uniqueness='global',
-                                           vertex_uniqueness='global')
-
-        return ':'.join(map(lambda r: str(r['name']), response['vertices']))
-
-    def get_all_parents_with_id(self, entity_id):
-        response = self.pimsGraph.traverse(start_vertex='entity/%(id)s' % {'id': entity_id},
-                                           direction='inbound', strategy='bfs',
-                                           edge_uniqueness='global',
-                                           vertex_uniqueness='global')
-
-        return ':'.join(map(lambda r: r['_key'] + '-' + str(r['name']), response['vertices']))
