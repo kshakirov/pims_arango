@@ -46,8 +46,11 @@ class GraphManagerAdvanced:
         return ref_list
 
     def save_references(self, entity_key, entity_data):
+        entities = self.pimsGraph.vertex_collection(self.VERTEX_COLLECTION)
         references_to_save = self.filter_references_to_save(entity_data)
         for ref in references_to_save:
+            if not entities.has(str(ref)):
+                entities.insert({'_key' : str(ref)})
             self.add_reference(entity_key, ref)
 
     def insert_entity(self, entity_data):
@@ -68,4 +71,3 @@ class GraphManagerAdvanced:
     def upsert_batch(self, entites):
         for entity in entites:
             self.upsert_entity(entity)
-
