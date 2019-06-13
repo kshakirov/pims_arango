@@ -28,7 +28,7 @@ class TestStringMethods(unittest.TestCase):
         batch = [{'_key': "0", 'name': 'parent 0', 'external_id': 23, "reference": {"id": 4}},
                                {'_key': "4", 'name': 'child 0_1', 'external_id': 24, "reference": {"id": 8}},
                                {'_key': "8", 'name': 'child 1_2 ', 'external_id': 25}]
-        self.g_manager.upsert_batch(batch)
+        self.g_manager.upsert_arango_import(batch)
 
 
 

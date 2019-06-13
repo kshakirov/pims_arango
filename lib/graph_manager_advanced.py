@@ -1,11 +1,13 @@
 from arango import ArangoClient
-import itertools
+import itertools, json,os
 
 
 class GraphManagerAdvanced:
     VERTEX_COLLECTION = 'entity'
     EDGE_COLLECTION = 'reference'
     DB = 'PimsDbFull'
+    DUMP_FILE = 'dump.json'
+    EDGE_FILE = 'dump_edge.json'
 
     def __init__(self, hostname, login, password):
         client = ArangoClient(protocol='http', host=hostname, port=8529)
@@ -109,3 +111,27 @@ class GraphManagerAdvanced:
             batch_col = batch_db.collection(self.EDGE_COLLECTION)
             for ref in references:
                 batch_col.insert(ref)
+
+    def upsert_arango_import(self, entities_batch):
+        references_data = self.prep_reference_bulk(entities_batch)
+        entities_data = list(map(lambda e: self.filter_data_to_save(e), entities_batch))
+        references = self.prep_reference_batch(entities_batch)
+        exists = os.path.isfile(self.DUMP_FILE)
+        if exists:
+            fd = open(self.DUMP_FILE, 'a')
+        else:
+            fd = open(self.DUMP_FILE, 'w')
+        for rec in (entities_data + references_data):
+            fd.write(json.dumps(rec) + "\n")
+
+        fd.close()
+
+        exists = os.path.isfile(self.EDGE_FILE)
+        if exists:
+            fd_edge = open(self.EDGE_FILE, 'a')
+        else:
+            fd_edge = open(self.EDGE_FILE, 'w')
+        for rec in (references):
+            fd_edge.write(json.dumps(rec) + "\n")
+
+        fd_edge.close()
