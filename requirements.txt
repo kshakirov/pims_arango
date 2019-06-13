@@ -1,2 +1,3 @@
 bottle
-Paste
+python-arango
+uwsgi

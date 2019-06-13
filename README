@@ -1,5 +1,5 @@
 0 sudo apt-get install python3-venv
-0.1 python -m venv
+0.1 python -m venv (python3.5 -m venv ../pims_arango/)
 1. activate venv - source venv/bin/activate
 2. pip install bottle
 3 pip install python-arango
