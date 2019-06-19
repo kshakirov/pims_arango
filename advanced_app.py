@@ -1,6 +1,6 @@
 from bottle import get, post, run, response, request
 from json import dumps
-import sys, bottle
+import sys, bottle,time
 
 sys.path.append('lib/')
 from graph_manager_advanced import GraphManagerAdvanced
@@ -9,7 +9,7 @@ app = bottle.default_app()  # or bottle.Bottle() if you prefer
 app.config['gm'] = GraphManagerAdvanced('localhost', 'root', 'servantes')
 
 
-@app.post('/entity')
+@app.get('/entity')
 def index():
     return 200
 
@@ -28,4 +28,4 @@ def index():
     g_manager.upsert_batch(entities)
 
 
-run(host='localhost', port=8082)
+app = application = app
