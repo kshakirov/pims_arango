@@ -1,5 +1,5 @@
 from arango import ArangoClient
-import itertools, json,os
+import itertools, json, os
 
 
 class GraphManagerAdvanced:
@@ -35,8 +35,11 @@ class GraphManagerAdvanced:
     def filter_references_to_bulk(self, entity_data):
         refs = {k: v for k, v in entity_data.items() if
                 k == 'reference'}
-        refs = list(map(lambda r: r['id'], list(refs.values())))
-        return refs
+        # refs = list(map(lambda r: r['id'], list(refs.values())))
+        if 'reference' in refs:
+            return refs['reference'].values()
+        else:
+            return []
 
     def update_entity(self, entity_key, entity_data):
         entities = self.pimsGraph.vertex_collection(self.VERTEX_COLLECTION)
@@ -51,10 +54,16 @@ class GraphManagerAdvanced:
 
     def prep_reference(self, ref_dict):
         parent_id = ref_dict['key']
-        child_id = ref_dict['refs']['reference']['id']
-        ref = {'_key': '%(p_id)s_%(ch_id)d' % {'p_id': parent_id, 'ch_id': child_id},
-               '_from': 'entity/%(p_id)s' % {'p_id': parent_id}, '_to': 'entity/%(ch_id)d' % {'ch_id': child_id}}
-        return ref
+        refs = []
+        for key in ref_dict['refs']['reference']:
+            print(key)
+            child_id = ref_dict['refs']['reference'][key]
+            ref = {'_key': '%(p_id)s_%(ch_id)d' % {'p_id': parent_id, 'ch_id': child_id},
+                   '_from': 'entity/%(p_id)s' % {'p_id': parent_id}, '_to': 'entity/%(ch_id)d' % {'ch_id': child_id},
+                   'edge_id': key}
+            refs.append(ref)
+
+        return refs
 
     def filter_non_existing_references(self, entity_key, entity_data):
         ref_dict = {k: v for k, v in entity_data.items() if not self.has_reference(entity_key, v['_key'])}
@@ -87,7 +96,7 @@ class GraphManagerAdvanced:
     def prep_reference_bulk(self, entities_batch):
         references_data = list(map(lambda e: self.filter_references_to_bulk(e), entities_batch))
         references_data = list(filter(None, references_data))
-        references_data = list(itertools.chain.from_iterable(references_data))
+        references_data = list(itertools.chain.from_iterable(list(map(lambda l: l, references_data))))
         return list(map(lambda l: {'_key': str(l)}, references_data))
 
     def prep_reference_batch(self, entities_batch):

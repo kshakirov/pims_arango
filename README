@@ -3,3 +3,10 @@
 1. activate venv - source venv/bin/activate
 2. pip install bottle
 3 pip install python-arango
+
+
+uwsgi
+
+1 uwsgi --http :8082 --wsgi-file advanced_app.py --master --processes 8  --threads 2 --stats 127.0.0.1:9191
+
+2 uwsgitop 127.0.0.1:9191
