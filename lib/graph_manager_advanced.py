@@ -107,7 +107,7 @@ class GraphManagerAdvanced:
         entities = self.db.collection(self.VERTEX_COLLECTION)
         references_data = self.prep_reference_bulk(entities_batch)
         entities_data = list(map(lambda e: self.filter_data_to_save(e), entities_batch))
-        entities.import_bulk(entities_data + references_data, halt_on_error=True, details=True, from_prefix=None,
+        entities.import_bulk(entities_data + references_data, halt_on_error=False, details=True, from_prefix=None,
                              to_prefix=None,
                              overwrite=None,
                              on_duplicate='update', sync=None)
@@ -115,7 +115,7 @@ class GraphManagerAdvanced:
     def upsert_batch(self, entities_batch):
         self.import_bulk(entities_batch)
         references = self.prep_reference_batch(entities_batch)
-        with self.db.begin_batch_execution(return_result=True) as batch_db:
+        with self.db.begin_batch_execution(return_result=False) as batch_db:
             batch_col = batch_db.collection(self.EDGE_COLLECTION)
             for ref in references:
                 batch_col.insert(ref)
