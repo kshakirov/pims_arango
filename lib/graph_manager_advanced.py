@@ -56,7 +56,6 @@ class GraphManagerAdvanced:
         parent_id = ref_dict['key']
         refs = []
         for key in ref_dict['refs']['reference']:
-            print(key)
             child_id = ref_dict['refs']['reference'][key]
             ref = {'_key': '%(p_id)s_%(ch_id)d' % {'p_id': parent_id, 'ch_id': child_id},
                    '_from': 'entity/%(p_id)s' % {'p_id': parent_id}, '_to': 'entity/%(ch_id)d' % {'ch_id': child_id},
