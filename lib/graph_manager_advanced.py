@@ -64,12 +64,21 @@ class GraphManagerAdvanced:
 
         return refs
 
-    def prep_entity_type_ref(self, entity):
+    def prep_entity_type_ref_out(self, entity):
         ref = {
-            '_key': 'entity_type_%(entity_type_id)d_%(entity_id)s' % {'entity_type_id': entity['entity_type_id'],
-                                                                      'entity_id': entity['_key']},
-            '_from': 'entity/entity_type_%(entity_type_id)d' % {'entity_type_id': entity['entity_type_id']},
+            '_key': 'entity_type_out_%(entity_type_id)d_%(entity_id)s' % {'entity_type_id': entity['entity_type_id'],
+                                                                          'entity_id': entity['_key']},
+            '_from': 'entity/entity_type_out_%(entity_type_id)d' % {'entity_type_id': entity['entity_type_id']},
             '_to': 'entity/%(entity_id)s' % {'entity_id': entity['_key']},
+            'edge_id': 0}
+        return ref
+
+    def prep_entity_type_ref_in(self, entity):
+        ref = {
+            '_key': '%(entity_id)s_entity_type_in_%(entity_type_id)d' % {'entity_type_id': entity['entity_type_id'],
+                                                                         'entity_id': entity['_key']},
+            '_to': 'entity/entity_type_in_%(entity_type_id)d' % {'entity_type_id': entity['entity_type_id']},
+            '_from': 'entity/%(entity_id)s' % {'entity_id': entity['_key']},
             'edge_id': 0}
         return ref
 
@@ -122,7 +131,9 @@ class GraphManagerAdvanced:
                              on_duplicate='update', sync=None)
 
     def create_entity_type_reference(self, entities_batch):
-        return list(map(lambda e: self.prep_entity_type_ref(e),entities_batch))
+        in_refs = list(map(lambda e: self.prep_entity_type_ref_in(e), entities_batch))
+        out_refs = list(map(lambda e: self.prep_entity_type_ref_out(e), entities_batch))
+        return in_refs + out_refs
 
     def upsert_batch(self, entities_batch):
         self.import_bulk(entities_batch)
