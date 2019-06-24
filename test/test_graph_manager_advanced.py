@@ -15,9 +15,11 @@ class TestStringMethods(unittest.TestCase):
     #     self.g_manager.upsert_entity({'_key': "8", 'name': 'child 1_2 ', 'external_id': 25})
 
     def test_upsert_batch(self):
-        batch = [{'_key': "0", 'name': 'parent 0', 'external_id': 23, "reference": {"25": 4, "27": 123}},
-                 {'_key': "4", 'name': 'child 0_1', 'external_id': 24, "reference": {"25": 8, "27": 12}},
-                 {'_key': "8", 'name': 'child 1_2 ', 'external_id': 25}]
+        batch = [{'_key': "0", 'name': 'parent 0', 'external_id': 23, 'entity_type_id': 4,
+                  "reference": {"25": 4, "27": 123}},
+                 {'_key': "4", 'name': 'child 0_1', 'external_id': 24, 'entity_type_id': 4,
+                  "reference": {"25": 8, "27": 12}},
+                 {'_key': "8", 'name': 'child 1_2 ', 'entity_type_id': 4, 'external_id': 25}]
         self.g_manager.upsert_batch(batch)
 
     # def test_parents_id(self):

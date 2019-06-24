@@ -64,6 +64,15 @@ class GraphManagerAdvanced:
 
         return refs
 
+    def prep_entity_type_ref(self, entity):
+        ref = {
+            '_key': 'entity_type_%(entity_type_id)d_%(entity_id)s' % {'entity_type_id': entity['entity_type_id'],
+                                                                      'entity_id': entity['_key']},
+            '_from': 'entity/entity_type_%(entity_type_id)d' % {'entity_type_id': entity['entity_type_id']},
+            '_to': 'entity/%(entity_id)s' % {'entity_id': entity['_key']},
+            'edge_id': 0}
+        return ref
+
     def filter_non_existing_references(self, entity_key, entity_data):
         ref_dict = {k: v for k, v in entity_data.items() if not self.has_reference(entity_key, v['_key'])}
         ref_list = list(map(lambda k: ref_dict[k]['id']))
@@ -112,10 +121,14 @@ class GraphManagerAdvanced:
                              overwrite=None,
                              on_duplicate='update', sync=None)
 
+    def create_entity_type_reference(self, entities_batch):
+        return list(map(lambda e: self.prep_entity_type_ref(e),entities_batch))
+
     def upsert_batch(self, entities_batch):
         self.import_bulk(entities_batch)
         references = self.prep_reference_batch(entities_batch)
+        entity_references = self.create_entity_type_reference(entities_batch)
         with self.db.begin_batch_execution(return_result=False) as batch_db:
             batch_col = batch_db.collection(self.EDGE_COLLECTION)
-            for ref in references:
+            for ref in (references + entity_references):
                 batch_col.insert(ref)
