@@ -48,4 +48,4 @@ def index():
     g_manager.add_pairs(entities)
 
 
-run(host='localhost', port=8081)
+run(host='pims-arango', port=8081)

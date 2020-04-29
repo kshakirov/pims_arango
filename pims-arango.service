@@ -1,0 +1,13 @@
+[Unit]
+Description=Pims-Arango
+
+[Service]
+Type=simple
+RemainAfterExit=yes
+User=pims
+SyslogIdentifier=pims-arango
+WorkingDirectory=/opt/pims2/pims_arango
+ExecStart=/opt/pims2/pims_arango/bin/python /opt/pims2/pims_arango/app.py &
+
+[Install]
+WantedBy=multi-user.target
